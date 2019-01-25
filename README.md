@@ -13,3 +13,6 @@ Latest esp_init_data_default.bin file: https://github.com/espressif/ESP8266_NONO
 
 Fix partitioning error on startup for D1 mini (at least for me): https://blog.csdn.net/yannanxiu/article/details/83550183
 
+How COM-Ports from Windows are mapped to linux subsystem: https://blogs.msdn.microsoft.com/wsl/2017/04/14/serial-support-on-the-windows-subsystem-for-linux/
+
+How to fix permission error on dev/ttyS: https://github.com/Microsoft/WSL/issues/617
