@@ -55,9 +55,12 @@ extern "C" void ICACHE_FLASH_ATTR user_pre_init(void) {
 }
 
 extern "C" void ICACHE_FLASH_ATTR user_init(void) {
-	os_printf("Hello World\r\n");
-
     I2CDisplay oled = I2CDisplay();
     oled.init();
     oled.clear_screen();
+
+    oled.goto_x_y(0, 0);
+    oled.draw_line(0,0, 127, 63);
+    oled.draw_line(0, 63, 127, 0);
+    oled.display();
 }

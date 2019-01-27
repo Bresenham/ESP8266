@@ -68,6 +68,7 @@ LINKFLAGS_eagle.app.v6 = \
 	-lmain	\
 	-lespnow	\
 	-lcrypto	\
+	-lm \
 	$(DEP_LIBS_eagle.app.v6)					\
 	-Wl,--end-group
 

@@ -7,6 +7,7 @@ extern "C" {
     #include "I2C.h"
 }
 
+#define	PROGMEM			ICACHE_RODATA_ATTR
 #define LCD_DISP_ON     0xAF
 #define LCD_DISP_OFF    0xAE
 #define LCD_I2C_ADDR    0x78
@@ -19,6 +20,11 @@ class I2CDisplay {
         void init(void);
         void clear_screen(void);
         void goto_x_y(uint8_t x, uint8_t y);
+        void put_c(char c);
+        void put_s(const char* s);
+        void draw_pixel(uint8_t x, uint8_t y);
+        void draw_line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2);
+        void display(void);
         I2CDisplay();
         I2CDisplay(uint8_t width, uint8_t height);
     private:
