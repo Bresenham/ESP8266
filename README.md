@@ -44,3 +44,15 @@ You should also make sure that the path to the compiler is in your $PATH-Variabl
 While you're at it, you can also add the SDK folder:
 
 `$ PATH=$PATH:/opt/esp/sdk/include`
+
+I also added two more commands in the upper-most Makefile (which is not part of this repository) to make flashing and erasing easier:<br/>
+
+`erase:`<br/>
+&nbsp;&nbsp;&nbsp;`esptool.py --port /dev/ttyS5 erase_flash`
+<br/>
+`flash:`<br/>
+&nbsp;&nbsp;&nbsp;`esptool.py -b 921600 --port /dev/ttyS5 write_flash 0x0 bin/eagle.flash.bin 0x10000 bin/eagle.irom0text.bin 0x3FC000 bin/esp_init_data_default_v08.bin`
+
+The address `0x3FC000` is for the board I use at the moment (D1 mini), it may not work with yours. The `esp_init_data_default_v08.bin` is from [here](https://github.com/espressif/ESP8266_NONOS_SDK/tree/master/bin).
+
+Check out the [Getting Started Guide](https://www.espressif.com/sites/default/files/documentation/2a-esp8266-sdk_getting_started_guide_en.pdf) on page 15 to get more information about the specific address for the `esp_init_data_default.bin` file.
