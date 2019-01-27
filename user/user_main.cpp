@@ -1,5 +1,9 @@
-#include "osapi.h"
-#include "user_interface.h"
+extern "C" {
+    #include "user_interface.h"
+    #include "ets_sys.h"
+}
+
+#include "I2C_OLED.h"
 
 #if ((SPI_FLASH_SIZE_MAP == 0) || (SPI_FLASH_SIZE_MAP == 1))
 #error "The flash map is not supported"
@@ -43,13 +47,17 @@ static const partition_item_t at_partition_table[] = {
     { SYSTEM_PARTITION_SYSTEM_PARAMETER, 				SYSTEM_PARTITION_SYSTEM_PARAMETER_ADDR, 			0x3000},
 };
 
-void ICACHE_FLASH_ATTR user_pre_init(void) {
+extern "C" void ICACHE_FLASH_ATTR user_pre_init(void) {
     if(!system_partition_table_regist(at_partition_table, sizeof(at_partition_table)/sizeof(at_partition_table[0]),SPI_FLASH_SIZE_MAP)) {
 		os_printf("system_partition_table_regist fail\r\n");
 		while(1);
 	}
 }
 
-void ICACHE_FLASH_ATTR user_init(void) {
+extern "C" void ICACHE_FLASH_ATTR user_init(void) {
 	os_printf("Hello World\r\n");
+
+    I2CDisplay oled = I2CDisplay();
+    oled.init();
+    oled.clear_screen();
 }

@@ -23,3 +23,5 @@ $RECYCLE.BIN/
 # =========================
 .output/lib/libuser.a
 *.out
+
+.output/
