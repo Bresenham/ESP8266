@@ -4,8 +4,9 @@
 extern "C" {
     #include "c_types.h"
     #include "osapi.h"
-    #include "I2C.h"
 }
+
+#include "I2C.h"
 
 #define	PROGMEM			ICACHE_RODATA_ATTR
 #define LCD_DISP_ON     0xAF
