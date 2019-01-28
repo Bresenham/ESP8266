@@ -39,7 +39,7 @@ You either call ./gen_misc.sh or Makefile from Projects-Folder.
 
 I compile my project like this:<br/>
 
-`make COMPILE=gcc BOOT=2 APP=0 SPI_SPEED=40 SPI_MODE=DIO SPI_SIZE_MAP=4`
+`$ make COMPILE=gcc BOOT=2 APP=0 SPI_SPEED=40 SPI_MODE=DIO SPI_SIZE_MAP=4`
 
 You should also make sure that the path to the compiler is in your $PATH-Variable, in my case for example:
 
@@ -48,6 +48,8 @@ You should also make sure that the path to the compiler is in your $PATH-Variabl
 While you're at it, you can also add the SDK folder:
 
 `$ PATH=$PATH:/opt/esp/sdk/include`
+
+Unfortunately, the linux subsystem doesn't remember changes made to the $PATH-Variable. So after every reboot I have to type in again the two commands mentioned above.
 
 I also added two more commands in the upper-most Makefile (which is not part of this repository) to make flashing and erasing easier:<br/>
 
