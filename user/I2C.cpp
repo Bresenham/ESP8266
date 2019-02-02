@@ -34,10 +34,53 @@ void I2C::start(void) {
     set_SCL_low();
 }
 
+void I2C::repeated_start(void) {
+    set_SDA_high();
+    os_delay_us(DELAY);
+    set_SCL_high();
+    os_delay_us(DELAY);
+    set_SDA_low();
+    os_delay_us(DELAY);
+    set_SCL_low();
+}
+
+void I2C::master_ack(void) {
+    set_SDA_low();
+    os_delay_us(DELAY);
+    set_SCL_low();
+    os_delay_us(DELAY);
+    set_SCL_high();
+    os_delay_us(DELAY);
+    set_SDA_high();
+}
+
+void I2C::master_nack(void) {
+    set_SDA_high();
+    os_delay_us(DELAY);
+    set_SCL_low();
+    os_delay_us(DELAY);
+    set_SCL_high();
+    os_delay_us(DELAY);
+    set_SDA_high();
+}
+
 void I2C::stop(void) {
     set_SCL_high();
     os_delay_us(DELAY);
     set_SDA_high();
+}
+
+uint8_t I2C::read_byte(void) {
+    uint8_t result = 0x00;
+    for(uint8_t i = 0; i < 9; i++) {
+        set_SCL_low();
+        os_delay_us(DELAY);
+        set_SCL_high();
+        if(read_SDA())
+            result |= (1 << i);
+        os_delay_us(DELAY);
+    }
+    return result;
 }
 
 bool I2C::send_byte(uint8_t byte) {
@@ -64,7 +107,7 @@ bool I2C::send_byte(uint8_t byte) {
 }
 
 bool I2C::read_SDA(void) {
-    return GPIO_INPUT_GET(I2C_MASTER_SDA_GPIO);
+    return GPIO_INPUT_GET(I2C_MASTER_SDA_GPIO) == 0;
 }
 
 void I2C::set_SDA_high(void) {

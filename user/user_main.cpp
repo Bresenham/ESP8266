@@ -4,6 +4,7 @@ extern "C" {
 }
 
 #include "I2C_OLED.h"
+#include "BMP280.h"
 
 #if ((SPI_FLASH_SIZE_MAP == 0) || (SPI_FLASH_SIZE_MAP == 1))
 #error "The flash map is not supported"
@@ -55,6 +56,7 @@ extern "C" void ICACHE_FLASH_ATTR user_pre_init(void) {
 }
 
 extern "C" void ICACHE_FLASH_ATTR user_init(void) {
+    /*
     I2CDisplay oled = I2CDisplay();
     oled.init();
     oled.clear_screen();
@@ -63,4 +65,17 @@ extern "C" void ICACHE_FLASH_ATTR user_init(void) {
     oled.draw_line(0,0, 127, 63);
     oled.draw_line(0, 63, 127, 0);
     oled.display();
+    */
+   
+    BMP280 bmp_280 = BMP280();
+    uint8_t sensor_id = bmp_280.setup();
+    char sensor_id_string[10];
+    os_sprintf(sensor_id_string, "%d", sensor_id);
+    if(sensor_id == 0)
+        os_printf("COULD NOT CONNECT TO BMP280, SENSOR ID IS 0.");
+    else {
+        os_printf("FOUND BMP280 WITH ID: ");
+        os_printf(sensor_id_string);
+        os_printf("\r\n");
+    }
 }

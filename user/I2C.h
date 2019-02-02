@@ -14,6 +14,10 @@ class I2C {
     public:
         void stop(void);
         bool send_byte(uint8_t byte);
+        uint8_t read_byte(void);
+        void repeated_start(void);
+        void master_ack(void);
+        void master_nack(void);
         void start(void);
         I2C();
     private:
