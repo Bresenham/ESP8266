@@ -64,5 +64,6 @@ The address `0x3FC000` is for the board I use at the moment (D1 mini), it may no
 Check out the [Getting Started Guide](https://www.espressif.com/sites/default/files/documentation/2a-esp8266-sdk_getting_started_guide_en.pdf) on page 15 to get more information about the specific address for the `esp_init_data_default.bin` file.
 
 ## Documentation
+BMP280 Documentation: https://cdn-shop.adafruit.com/datasheets/BST-BMP280-DS001-11.pdf <br/>
 ESP8266 reads ID from BMP280 via Soft-I2C (analyzed with Saleae Logic Analyzer):
 ![alt text](https://github.com/Bresenham/ESP8266/blob/master/resources/ESP8266_Read_BMP280_ID_via_I2C.png)
