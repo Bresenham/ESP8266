@@ -19,6 +19,8 @@ How COM-Ports from Windows are mapped to linux subsystem: https://blogs.msdn.mic
 
 How to fix permission error on dev/ttyS: https://github.com/Microsoft/WSL/issues/617
 
+Library to communicate with the SSD1306 OLED Display via I2C (in german): https://www.mikrocontroller.net/topic/415651
+
 ## General projectstructure to make things work with the Makefiles from espressif:
 
 Projects<br/>
@@ -40,6 +42,9 @@ You either call ./gen_misc.sh or Makefile from Projects-Folder.
 I compile my project like this:<br/>
 
 `$ make COMPILE=gcc BOOT=2 APP=0 SPI_SPEED=40 SPI_MODE=DIO SPI_SIZE_MAP=4`
+
+If, for whatever reason, the compiler doesn't find the include path to the SDK where all the header files are, do this:<br/>
+* Add the path to your include directory (e.g. `/opt/esp/sdk/include`) to the INCLUDE-statement at the very bottom of the outer-most Makefile.
 
 You should also make sure that the path to the compiler is in your $PATH-Variable, in my case for example:
 
