@@ -68,5 +68,4 @@ extern "C" void ICACHE_FLASH_ATTR user_init(void) {
     */
    
     BMP280 bmp_280 = BMP280();
-    bmp_280.setup();
 }
