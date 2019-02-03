@@ -68,14 +68,5 @@ extern "C" void ICACHE_FLASH_ATTR user_init(void) {
     */
    
     BMP280 bmp_280 = BMP280();
-    uint8_t sensor_id = bmp_280.setup();
-    char sensor_id_string[10];
-    os_sprintf(sensor_id_string, "%d", sensor_id);
-    if(sensor_id == 0)
-        os_printf("COULD NOT CONNECT TO BMP280, SENSOR ID IS 0.");
-    else {
-        os_printf("FOUND BMP280 WITH ID: ");
-        os_printf(sensor_id_string);
-        os_printf("\r\n");
-    }
+    bmp_280.setup();
 }

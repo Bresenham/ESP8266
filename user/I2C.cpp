@@ -77,7 +77,7 @@ uint8_t I2C::read_byte(void) {
         os_delay_us(DELAY);
         set_SCL_high();
         if(read_SDA())
-            result |= (1 << i);
+            result |= (1 << 7 - i);
         os_delay_us(DELAY);
     }
     return result;
@@ -100,14 +100,15 @@ bool I2C::send_byte(uint8_t byte) {
     os_delay_us(DELAY);
     set_SCL_high();
     os_delay_us(DELAY);
+    uint8_t slave_ack = read_SDA();
     set_SCL_low();
     os_delay_us(DELAY);
 
-    return read_SDA();
+    return slave_ack == 0;
 }
 
-bool I2C::read_SDA(void) {
-    return GPIO_INPUT_GET(I2C_MASTER_SDA_GPIO) == 0;
+uint8_t I2C::read_SDA(void) {
+    return GPIO_INPUT_GET(I2C_MASTER_SDA_GPIO);
 }
 
 void I2C::set_SDA_high(void) {

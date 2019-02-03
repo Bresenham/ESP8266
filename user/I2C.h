@@ -25,7 +25,7 @@ class I2C {
         void set_SDA_low(void);
         void set_SCL_high(void);
         void set_SCL_low(void);
-        bool read_SDA(void);
+        uint8_t read_SDA(void);
 };
 
 #endif
