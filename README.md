@@ -24,7 +24,7 @@ Library to communicate with the SSD1306 OLED Display via I2C (in german): https:
 ## General projectstructure to make things work with the Makefiles from espressif:
 
 Projects<br/>
---bin\ (can be empty)<br/>
+--bin\ (from [here](https://github.com/espressif/ESP8266_NONOS_SDK/tree/master/bin))<br/>
 --ProjectDirectory<br/>
 &nbsp;&nbsp;&nbsp;--user (contains your source-code)<br/>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;--Makefile (from [here](https://github.com/espressif/ESP8266_NONOS_SDK/blob/master/examples/simple_pair/user/Makefile))<br/>
@@ -63,6 +63,8 @@ I also added two more commands in the upper-most Makefile (which is not part of 
 <br/>
 `flash:`<br/>
 &nbsp;&nbsp;&nbsp;`esptool.py -b 921600 --port /dev/ttyS5 write_flash 0x0 bin/eagle.flash.bin 0x10000 bin/eagle.irom0text.bin 0x3FC000 bin/esp_init_data_default_v08.bin`
+
+If somehow esptool doesn't work or throws weird errors (like `rom doesn't support changing baud rate. keeping initial baud rate 115200`), remove the package from your linux distribution and instead clone the latest version from [github](https://github.com/espressif/esptool). As the last step, add the directory to your $PATH-Variable: `PATH=$PATH:/opt/esp/esptool/`.
 
 The address `0x3FC000` is for the board I use at the moment (D1 mini), it may not work with yours. The `esp_init_data_default_v08.bin` is from [here](https://github.com/espressif/ESP8266_NONOS_SDK/tree/master/bin).
 
