@@ -47,21 +47,19 @@ void I2C::repeated_start(void) {
 void I2C::master_ack(void) {
     set_SDA_low();
     os_delay_us(DELAY);
-    set_SCL_low();
-    os_delay_us(DELAY);
     set_SCL_high();
+    os_delay_us(DELAY);
+    set_SCL_low();
     os_delay_us(DELAY);
     set_SDA_high();
 }
 
 void I2C::master_nack(void) {
-    set_SDA_high();
-    os_delay_us(DELAY);
     set_SCL_low();
     os_delay_us(DELAY);
     set_SCL_high();
     os_delay_us(DELAY);
-    set_SDA_high();
+    set_SCL_low();
 }
 
 void I2C::stop(void) {
@@ -72,37 +70,34 @@ void I2C::stop(void) {
 
 uint8_t I2C::read_byte(void) {
     uint8_t result = 0x00;
-    for(uint8_t i = 0; i < 9; i++) {
-        set_SCL_low();
-        os_delay_us(DELAY);
+    for(uint8_t i = 0; i < 8; i++) {
         set_SCL_high();
         if(read_SDA())
             result |= (1 << 7 - i);
-        os_delay_us(DELAY);
+        set_SCL_low();
     }
     return result;
 }
 
 bool I2C::send_byte(uint8_t byte) {
     for(uint8_t i = 0; i < 8; i++) {
-        set_SCL_low();
         if(byte & (1 << 7 - i))
             set_SDA_high();
         else
             set_SDA_low();
-        os_delay_us(DELAY);
         set_SCL_high();
         os_delay_us(DELAY);
+        set_SCL_low();
     }
+    
+    set_SDA_high();
 
     /* 9th clock for slave to ack transmitted byte */
-    set_SCL_low();
     os_delay_us(DELAY);
     set_SCL_high();
     os_delay_us(DELAY);
     uint8_t slave_ack = read_SDA();
     set_SCL_low();
-    os_delay_us(DELAY);
 
     return slave_ack == 0;
 }

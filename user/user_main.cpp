@@ -66,6 +66,15 @@ extern "C" void ICACHE_FLASH_ATTR user_init(void) {
     oled.draw_line(0, 63, 127, 0);
     oled.display();
     */
-   
+
     BMP280 bmp_280 = BMP280();
+
+    while(true) {
+        int32_t temperature = bmp_280.read_temperature();
+        os_printf("Temperature: ");
+        os_printf("%d\r\n", temperature);
+        os_delay_us(2000000);
+    }
+    
+
 }

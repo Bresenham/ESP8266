@@ -8,7 +8,7 @@
 #define I2C_MASTER_SDA_FUNC FUNC_GPIO4
 #define I2C_MASTER_SCL_FUNC FUNC_GPIO5
 
-#define DELAY 3
+#define DELAY 0
 
 class I2C {
     public:

@@ -19,6 +19,8 @@
 
 #define SENSOR_CONFIG_REG               0xF5
 #define SENSOR_STANDBY_TIME_500_MS      0x80
+#define SENSOR_STANDBY_TIME_1000_MS     0xA0
+#define SENSOR_STANDBY_TIME_2000_MS     0xC0
 
 #define SENSOR_TEMP_SAMPLING_16         0xE0
 #define SENSOR_TEMP_SAMPLING_8          0x40
@@ -47,11 +49,12 @@
 
 class BMP280 {
     public:
-        void read_temperature(void);
+        void test(void);
+        int32_t read_temperature(void);
         BMP280(void);
     private:
         void setup(void);
-        void calculate_temperature(void);
+        int32_t calculate_temperature(uint32_t value);
         uint8_t get_id(void);
         void read_reg(uint8_t reg_addr, uint8_t amount, uint8_t reg_data[]);
         uint8_t read_reg(uint8_t reg_addr);
