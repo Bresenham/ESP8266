@@ -58,26 +58,22 @@ extern "C" void ICACHE_FLASH_ATTR user_pre_init(void) {
 
 os_timer_t temperature_timer;
 BMP280 bmp_280;
+I2CDisplay oled;
 
 extern "C" void ICACHE_FLASH_ATTR read_temperature(void *ptr) {
     int32_t temperature = bmp_280.read_temperature();
-    os_printf("Temperature: ");
-    os_printf("%d\r\n", temperature);
+    char str[14];
+    os_sprintf(str, "Temp = %d *C", temperature);
+    oled.clear_screen();
+    oled.goto_x_y(0, 0);
+    oled.put_s(str);
 }
 
 extern "C" void ICACHE_FLASH_ATTR user_init(void) {
-    /*
-    I2CDisplay oled = I2CDisplay();
-    oled.init();
-    oled.clear_screen();
-
-    oled.goto_x_y(0, 0);
-    oled.draw_line(0,0, 127, 63);
-    oled.draw_line(0, 63, 127, 0);
-    oled.display();
-    */
-
     bmp_280 = BMP280();
+    oled = I2CDisplay();
+    oled.init();
+
     os_timer_setfn(&temperature_timer, read_temperature, NULL);
     os_timer_arm(&temperature_timer, 1000, true);
 }
