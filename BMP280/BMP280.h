@@ -1,7 +1,7 @@
 #ifndef BMP280_H
 #define BMP280_H
 
-#include "I2C.h"
+#include "../Soft_I2C/I2C.h"
 
 /*
  * For these two addresses to work, the SDO-Pin of the BMP280 needs to be connected to VCC (=high).
@@ -59,11 +59,10 @@ class BMP280 {
         void read_reg(uint8_t reg_addr, uint8_t amount, uint8_t reg_data[]);
         uint8_t read_reg(uint8_t reg_addr);
         void write_reg(uint8_t reg_addr, uint8_t data);
-        I2C i2c;
         uint16_t dig_T1;
         int16_t dig_T2;
         int16_t dig_T3;
-
+        I2C i2c;
 };
 
 #endif

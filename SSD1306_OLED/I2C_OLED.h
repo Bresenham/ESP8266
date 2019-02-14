@@ -6,7 +6,7 @@ extern "C" {
     #include "osapi.h"
 }
 
-#include "I2C.h"
+#include "../Soft_I2C/I2C.h"
 
 #define	PROGMEM			ICACHE_RODATA_ATTR
 #define LCD_DISP_ON     0xAF
@@ -16,8 +16,6 @@ extern "C" {
 
 class I2CDisplay {
     public:
-        void setWidth(uint8_t width);
-        void setHeight(uint8_t height);
         void init(void);
         void clear_screen(void);
         void goto_x_y(uint8_t x, uint8_t y);
@@ -26,11 +24,8 @@ class I2CDisplay {
         void draw_pixel(uint8_t x, uint8_t y);
         void draw_line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2);
         void display(void);
-        I2CDisplay();
-        I2CDisplay(uint8_t width, uint8_t height);
-    private:
-        uint8_t width;
-        uint8_t height;
+        I2CDisplay() { init(); };
+    protected:
         I2C i2c;
         void lcd_command(uint8_t cmd);
         void lcd_data(uint8_t data);

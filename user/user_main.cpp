@@ -3,9 +3,8 @@ extern "C" {
     #include "ets_sys.h"
     #include "osapi.h"
 }
-
-#include "I2C_OLED.h"
-#include "BMP280.h"
+#include "../BMP280/BMP280.h"
+#include "../SSD1306_OLED/I2C_TEMP_OLED.h"
 
 #if ((SPI_FLASH_SIZE_MAP == 0) || (SPI_FLASH_SIZE_MAP == 1))
 #error "The flash map is not supported"
@@ -58,12 +57,12 @@ extern "C" void ICACHE_FLASH_ATTR user_pre_init(void) {
 
 os_timer_t temperature_timer;
 BMP280 bmp_280;
-I2CDisplay oled;
+I2CTemperatureDisplay oled;
 
 extern "C" void ICACHE_FLASH_ATTR read_temperature(void *ptr) {
     int32_t temperature = bmp_280.read_temperature();
     char str[14];
-    os_sprintf(str, "Temp = %d *C", temperature);
+    os_sprintf(str, "Temp = %d °C", temperature);
     oled.clear_screen();
     oled.goto_x_y(0, 0);
     oled.put_s(str);
@@ -71,7 +70,7 @@ extern "C" void ICACHE_FLASH_ATTR read_temperature(void *ptr) {
 
 extern "C" void ICACHE_FLASH_ATTR user_init(void) {
     bmp_280 = BMP280();
-    oled = I2CDisplay();
+    oled = I2CTemperatureDisplay();
     oled.init();
 
     os_timer_setfn(&temperature_timer, read_temperature, NULL);

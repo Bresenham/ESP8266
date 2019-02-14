@@ -1,4 +1,3 @@
-
 #############################################################
 # Required variables for each makefile
 # Discard this section from all parent makefiles
@@ -12,7 +11,7 @@
 #     a generated lib/image xxx.a ()
 #
 ifndef PDIR
-GEN_LIBS = user.a
+GEN_LIBS = OLED.a
 endif
 
 
@@ -37,7 +36,7 @@ endif
 # Required for each makefile to inherit from the parent
 #
 
-INCLUDES := $(INCLUDES) -I $(PDIR)include
-INCLUDES += -I .
+INCLUDES := $(INCLUDES) -I $(PDIR)include -I ../user/
+INCLUDES += -I ./
 PDIR := ../$(PDIR)
 sinclude $(PDIR)Makefile

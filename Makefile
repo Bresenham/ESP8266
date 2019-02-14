@@ -22,7 +22,10 @@ GEN_IMAGES= eagle.app.v6.out
 GEN_BINS= eagle.app.v6.bin
 SPECIAL_MKTARGETS=$(APP_MKTARGETS)
 SUBDIRS=    \
-	user
+	user    \
+	BMP280   \
+	SOFT_I2C	\
+	SSD1306_OLED
 
 endif # } PDIR
 
@@ -46,7 +49,10 @@ ifeq ($(FLAVOR),release)
 endif
 
 COMPONENTS_eagle.app.v6 = \
-	user/libuser.a
+	user/user.a  \
+	BMP280/BMP280.a	\
+	Soft_I2C/I2C.a	\
+	SSD1306_OLED/OLED.a
 
 LINKFLAGS_eagle.app.v6 = \
 	-L../lib        \
@@ -65,10 +71,14 @@ LINKFLAGS_eagle.app.v6 = \
 	-lnet80211	\
 	-llwip	\
 	-lwpa	\
-	-lmain	\
-	-lespnow	\
 	-lcrypto	\
-	-lm \
+	-lmain	\
+	-ljson	\
+	-lupgrade\
+	-lmbedtls	\
+	-lpwm	\
+	-ldriver \
+	-lsmartconfig \
 	$(DEP_LIBS_eagle.app.v6)					\
 	-Wl,--end-group
 
@@ -90,7 +100,8 @@ DEPENDS_eagle.app.v6 = \
 #	-DTXRX_TXBUF_DEBUG
 #	-DTXRX_RXBUF_DEBUG
 #	-DWLAN_CONFIG_CCX
-CONFIGURATION_DEFINES =	-DICACHE_FLASH
+CONFIGURATION_DEFINES =	-DICACHE_FLASH \
+                        -DGLOBAL_DEBUG_ON
 
 DEFINES +=				\
 	$(UNIVERSAL_TARGET_DEFINES)	\
@@ -113,7 +124,7 @@ DDEFINES +=				\
 # Required for each makefile to inherit from the parent
 #
 
-INCLUDES := $(INCLUDES) -I $(PDIR)include
+INCLUDES := $(INCLUDES) -I .
 PDIR := ../$(PDIR)
 sinclude $(PDIR)Makefile
 
