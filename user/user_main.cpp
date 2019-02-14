@@ -1,6 +1,7 @@
 extern "C" {
     #include "user_interface.h"
     #include "ets_sys.h"
+    #include "osapi.h"
 }
 
 #include "I2C_OLED.h"
@@ -55,6 +56,15 @@ extern "C" void ICACHE_FLASH_ATTR user_pre_init(void) {
 	}
 }
 
+os_timer_t temperature_timer;
+BMP280 bmp_280;
+
+extern "C" void ICACHE_FLASH_ATTR read_temperature(void *ptr) {
+    int32_t temperature = bmp_280.read_temperature();
+    os_printf("Temperature: ");
+    os_printf("%d\r\n", temperature);
+}
+
 extern "C" void ICACHE_FLASH_ATTR user_init(void) {
     /*
     I2CDisplay oled = I2CDisplay();
@@ -67,14 +77,7 @@ extern "C" void ICACHE_FLASH_ATTR user_init(void) {
     oled.display();
     */
 
-    BMP280 bmp_280 = BMP280();
-
-    while(true) {
-        int32_t temperature = bmp_280.read_temperature();
-        os_printf("Temperature: ");
-        os_printf("%d\r\n", temperature);
-        os_delay_us(2000000);
-    }
-    
-
+    bmp_280 = BMP280();
+    os_timer_setfn(&temperature_timer, read_temperature, NULL);
+    os_timer_arm(&temperature_timer, 1000, true);
 }
