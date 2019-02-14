@@ -19,8 +19,6 @@ How COM-Ports from Windows are mapped to linux subsystem: https://blogs.msdn.mic
 
 How to fix permission error on dev/ttyS: https://github.com/Microsoft/WSL/issues/617
 
-Library to communicate with the SSD1306 OLED Display via I2C (in german): https://www.mikrocontroller.net/topic/415651
-
 ## General projectstructure to make things work with the Makefiles from espressif:
 
 Projects<br/>
@@ -59,10 +57,12 @@ Unfortunately, the linux subsystem doesn't remember changes made to the $PATH-Va
 I also added two more commands in the upper-most Makefile (which is not part of this repository) to make flashing and erasing easier:<br/>
 
 `erase:`<br/>
-&nbsp;&nbsp;&nbsp;`esptool.py --port /dev/ttyS5 erase_flash`
+&nbsp;&nbsp;&nbsp;`esptool.py --port $(PORT) erase_flash`
 <br/>
 `flash:`<br/>
-&nbsp;&nbsp;&nbsp;`esptool.py -b 921600 --port /dev/ttyS5 write_flash 0x0 bin/eagle.flash.bin 0x10000 bin/eagle.irom0text.bin 0x3FC000 bin/esp_init_data_default_v08.bin`
+&nbsp;&nbsp;&nbsp;`esptool.py -b 921600 --port $(PORT) write_flash 0x0 bin/eagle.flash.bin 0x10000 bin/eagle.irom0text.bin 0x3FC000 bin/esp_init_data_default_v08.bin`
+
+Flashing the ESP8266 now works like this `make flash PORT=/dev/ttyS5`
 
 If somehow esptool doesn't work or throws weird errors (like `rom doesn't support changing baud rate. keeping initial baud rate 115200`), remove the package from your linux distribution and instead clone the latest version from [github](https://github.com/espressif/esptool). As the last step, add the directory to your $PATH-Variable: `PATH=$PATH:/opt/esp/esptool/`.
 
@@ -74,3 +74,5 @@ Check out the [Getting Started Guide](https://www.espressif.com/sites/default/fi
 BMP280 Documentation: https://cdn-shop.adafruit.com/datasheets/BST-BMP280-DS001-11.pdf <br/>
 ESP8266 reads ID from BMP280 via Soft-I2C (analyzed with Saleae Logic Analyzer):
 ![alt text](https://github.com/Bresenham/ESP8266/blob/master/resources/ESP8266_Read_BMP280_ID_via_I2C.png)
+
+Library for SSD1306 OLED Display communication: https://www.mikrocontroller.net/topic/415651 <br/>
