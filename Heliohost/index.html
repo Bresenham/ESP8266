@@ -1,0 +1,64 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="https://canvasjs.com/assets/script/jquery-1.11.1.min.js"></script>
+        <script src="https://canvasjs.com/assets/script/jquery.canvasjs.min.js"></script>
+    </head>
+    <body>
+        <script>
+            var interval = null;
+            var dataPoints = [];
+
+            var options =  {
+                animationEnabled: true,
+                theme: "light2",
+                title: {
+                    text: "Temperature Curve"
+                },
+                axisX: {
+                    labelFontSize: 14,
+                    valueFormatString: "DD MMM YYYY HH:mm:ss"
+                },
+                axisY: {
+                    labelFontSize: 14,
+                    titleFontSize: 24,
+                    title: "Degree Celcius",
+                    includeZero: false
+                },
+                data: [{
+                    type: "line",
+                    yValueFormatString: "##.##°C",
+                    indexLabelFontSize: 4,
+                    dataPoints: dataPoints
+                }]
+            };
+            
+
+            $(document).ready(() => {
+                loadData();
+            });
+
+
+            function loadData() {
+                $.get("script.php", data => {
+                    var json = jQuery.parseJSON(data);
+                    $.each(json, (index, item) => {
+                        dataPoints.push({
+                            x: new Date(item.TIME),
+                            y: item.TEMP_VALUE / 100.0
+                        });
+                    });
+                    $("#chartContainer").CanvasJSChart(options);
+                });
+            }
+
+            function configureInterval(){
+                interval = setInterval(() => {
+                    loadData();
+                }, 10000);
+            }
+        </script>
+        <div id="chartContainer" style="height: 100%; width: 100%;"></div>
+    </body>
+</html>
