@@ -66,19 +66,25 @@ Wifi wifi;
 
 extern "C" void ICACHE_FLASH_ATTR read_temperature(void *ptr) {
     int32_t temperature = bmp_280.read_temperature();
+
+    char temp_str[11];
+    os_sprintf(temp_str, "VALUE=%d", temperature);
+    os_printf(temp_str);
+    os_printf("\r\n");
+    wifi.send_data(temp_str);
+
+    /*
     char str[14];
     os_sprintf(str, "Temp = %d °C", temperature);
     oled.clear_screen();
     oled.goto_x_y(0, 0);
     oled.put_s(str);
+    */
 }
 
 extern "C" void ICACHE_FLASH_ATTR init_classes(void *ptr) {
     wifi = Wifi();
-    wifi.request_scan();
-    wifi.connect();
 
-    /*
     bmp_280 = BMP280();
     
     oled = I2CTemperatureDisplay();
@@ -86,7 +92,6 @@ extern "C" void ICACHE_FLASH_ATTR init_classes(void *ptr) {
 
     os_timer_setfn(&temperature_timer, read_temperature, NULL);
     os_timer_arm(&temperature_timer, 1000, true);
-    */
 }
 
 extern "C" void ICACHE_FLASH_ATTR user_init(void) {

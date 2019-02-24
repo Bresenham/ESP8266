@@ -12,7 +12,7 @@ extern "C" {
 
 #include "Wifi.h"
 
-#define REQUEST_TEXT "GET /script.php HTTP/1.1\r\ncache-control: no-cache\r\nUser-Agent: curl/7.37.0\r\nAccept: */*\r\nHost: scalar.heliohost.org\r\naccept-encoding: gzip, deflate\r\n\r\n"
+#define REQUEST_TEXT "POST /script.php HTTP/1.1\r\ncache-control: no-cache\r\nUser-Agent: curl/7.37.0\r\nAccept: */*\r\nHost: scalar.heliohost.org\r\naccept-encoding: gzip, deflate\r\nConnection: keep-alive\r\ncontent-type: application/x-www-form-urlencoded\r\ncontent-length: 10\r\n\r\n%s\r\n\r\n"
 #define PACKET_SIZE (2 * 1024)
 
 LOCAL os_timer_t test_timer;
@@ -20,10 +20,24 @@ LOCAL struct espconn user_tcp_conn;
 LOCAL struct _esp_tcp user_tcp;
 ip_addr_t tcp_server_ip;
 
+char Wifi::data_to_send[12] = "";
+bool sent_last_data = true;
+
 Wifi::Wifi() {
+    wifi_station_set_auto_connect(false);
+    wifi_set_opmode(STATION_MODE);
     this->SSID = "";
     this->PW = "";
-    wifi_set_opmode(STATION_MODE);
+}
+
+void Wifi::send_data(char *dat) {
+    if(sent_last_data) {
+        os_strcpy(data_to_send, dat);
+        sent_last_data = false;
+        this->connect();
+    } else {
+        os_printf("Delay...\r\n");
+    }
 }
 
 void ICACHE_FLASH_ATTR Wifi::connect(void) {
@@ -39,43 +53,13 @@ void ICACHE_FLASH_ATTR Wifi::connect(void) {
     //Set ap settings 
     os_memcpy(&stationConf.ssid, this->SSID, 32); 
     os_memcpy(&stationConf.password, this->PW, 64); 
-    wifi_station_set_config(&stationConf); 
+    wifi_station_set_config(&stationConf);
+    wifi_station_connect();
 
     // Set timer to check whether router allotted an IP 
     os_timer_disarm(&test_timer);
     os_timer_setfn(&test_timer, (os_timer_func_t *)user_check_ip, NULL);
     os_timer_arm(&test_timer, 100, 0);
-}
-
-void ICACHE_FLASH_ATTR Wifi::scan_done_cb(void *arg, STATUS status) {
-    char buf[100];
-    struct bss_info *bssInfo = (struct bss_info*)arg;
-    bssInfo = STAILQ_NEXT(bssInfo, next);
-
-    os_printf("-------------- WIFI SCAN RESULTS --------------\r\n");
-    while (bssInfo != NULL) {
-        os_sprintf(buf, "%-32s %02X:%02X:%02X:%02X:%02X:%02X, ch %2d, auth %d, hid %d, rssi %d\n\r", 
-                   bssInfo->ssid, 
-                   bssInfo->bssid[0], bssInfo->bssid[1], bssInfo->bssid[2],
-                   bssInfo->bssid[3], bssInfo->bssid[4], bssInfo->bssid[5],
-                   bssInfo->channel,
-                   bssInfo->authmode, bssInfo->is_hidden,
-                   bssInfo->rssi);
-        os_printf(buf);
-        os_delay_us(200);
-        bssInfo = STAILQ_NEXT(bssInfo, next);
-    }
-    os_printf("-------------- END --------------\r\n");
-}
-
-void ICACHE_FLASH_ATTR Wifi::request_scan(void) {
-    struct scan_config sc;
-    sc.ssid = NULL;
-    sc.bssid = NULL;
-    sc.channel = 0;
-    sc.show_hidden = 1;
-
-    wifi_station_scan(&sc, scan_done_cb);
 }
 
 void ICACHE_FLASH_ATTR Wifi::user_tcp_recv_cb(void *arg, char *pusrdata, unsigned short length) {
@@ -88,12 +72,13 @@ void ICACHE_FLASH_ATTR Wifi::user_tcp_sent_cb(void *arg) {
 
 void ICACHE_FLASH_ATTR Wifi::user_tcp_discon_cb(void *arg) {
     os_printf("Disconnected from server.\r\n");
+    sent_last_data = true;
 }
 
 void ICACHE_FLASH_ATTR Wifi::user_send_data(espconn *pespconn) {
     char *pbuf = (char *)os_zalloc(PACKET_SIZE);
   
-    os_strcpy(pbuf, REQUEST_TEXT);
+    os_sprintf(pbuf, REQUEST_TEXT, data_to_send);
 
     os_printf("-------------- HTTP REQUEST CONTENT --------------\r\n");
     os_printf(pbuf);
@@ -202,4 +187,35 @@ void ICACHE_FLASH_ATTR Wifi::user_check_ip(void) {
             os_timer_arm(&test_timer, 100, 0);
         }
     }
+}
+
+void ICACHE_FLASH_ATTR Wifi::scan_done_cb(void *arg, STATUS status) {
+    char buf[100];
+    struct bss_info *bssInfo = (struct bss_info*)arg;
+    bssInfo = STAILQ_NEXT(bssInfo, next);
+
+    os_printf("-------------- WIFI SCAN RESULTS --------------\r\n");
+    while (bssInfo != NULL) {
+        os_sprintf(buf, "%-32s %02X:%02X:%02X:%02X:%02X:%02X, ch %2d, auth %d, hid %d, rssi %d\n\r", 
+                   bssInfo->ssid, 
+                   bssInfo->bssid[0], bssInfo->bssid[1], bssInfo->bssid[2],
+                   bssInfo->bssid[3], bssInfo->bssid[4], bssInfo->bssid[5],
+                   bssInfo->channel,
+                   bssInfo->authmode, bssInfo->is_hidden,
+                   bssInfo->rssi);
+        os_printf(buf);
+        os_delay_us(200);
+        bssInfo = STAILQ_NEXT(bssInfo, next);
+    }
+    os_printf("-------------- END --------------\r\n");
+}
+
+void ICACHE_FLASH_ATTR Wifi::scan_wifi_networks(void) {
+    struct scan_config sc;
+    sc.ssid = NULL;
+    sc.bssid = NULL;
+    sc.channel = 0;
+    sc.show_hidden = 1;
+
+    wifi_station_scan(&sc, scan_done_cb);
 }

@@ -21,9 +21,6 @@ int32_t BMP280::read_temperature(void) {
     uint32_t value = raw_sensor_data[0] << 16 | raw_sensor_data[1] << 8 | raw_sensor_data[2];
     value = value >> 4;
 
-    os_printf("RAW VALUE ");
-    os_printf("%d\r\n", value);
-
     return calculate_temperature(value);
 }
 

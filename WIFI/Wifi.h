@@ -3,11 +3,11 @@
 
 class Wifi {
     public:
-        void connect(void);
-        void post_request(char *data);
-        void request_scan(void);
+        void send_data(char *data);
+        void scan_wifi_networks(void);
         Wifi();
     private:
+        void connect(void);
         static void user_tcp_recv_cb(void *arg, char *pusrdata, unsigned short length);
         static void user_tcp_sent_cb(void *arg);
         static void user_tcp_discon_cb(void *arg);
@@ -21,6 +21,8 @@ class Wifi {
 
         const char *SSID;
         const char *PW;
+
+        static char data_to_send[12];
 
 };
 
