@@ -71,6 +71,7 @@ extern "C" void ICACHE_FLASH_ATTR read_temperature(void *ptr) {
     os_sprintf(temp_str, "VALUE=%d", temperature);
     os_printf(temp_str);
     os_printf("\r\n");
+    
     wifi.send_data(temp_str);
 
     /*

@@ -7,49 +7,53 @@
     </head>
     <body>
         <script>
+            var chart = null;
             var interval = null;
             var dataPoints = [];
 
-            var options =  {
-                animationEnabled: true,
-                theme: "light2",
-                title: {
-                    text: "Temperature Curve"
-                },
-                axisX: {
-                    labelFontSize: 14,
-                    valueFormatString: "DD MMM YYYY HH:mm:ss"
-                },
-                axisY: {
-                    labelFontSize: 14,
-                    titleFontSize: 24,
-                    title: "Degree Celcius",
-                    includeZero: false
-                },
-                data: [{
-                    type: "line",
-                    yValueFormatString: "##.##°C",
-                    indexLabelFontSize: 4,
-                    dataPoints: dataPoints
-                }]
-            };
-            
-
             $(document).ready(() => {
+                setup();
                 loadData();
+                configureInterval();
             });
 
+            function setup() {
+                chart = new CanvasJS.Chart("chartContainer", {
+                    animationEnabled: true,
+                    theme: "light2",
+                    title: {
+                        text: "Temperature Curve"
+                    },
+                    axisX: {
+                        labelFontSize: 14,
+                        valueFormatString: "DD MMM YYYY HH:mm:ss"
+                    },
+                    axisY: {
+                        labelFontSize: 14,
+                        titleFontSize: 24,
+                        title: "Degree Celcius",
+                        includeZero: false
+                    },
+                    data: [{
+                        type: "line",
+                        yValueFormatString: "##.##°C",
+                        indexLabelFontSize: 4,
+                        dataPoints: dataPoints
+                    }]
+                });
+            }
 
             function loadData() {
                 $.get("script.php", data => {
                     var json = jQuery.parseJSON(data);
+                    chart.options.data[0].dataPoints = [];
                     $.each(json, (index, item) => {
-                        dataPoints.push({
+                        chart.options.data[0].dataPoints.push({
                             x: new Date(item.TIME),
                             y: item.TEMP_VALUE / 100.0
                         });
                     });
-                    $("#chartContainer").CanvasJSChart(options);
+                    chart.render();
                 });
             }
 
