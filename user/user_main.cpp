@@ -58,6 +58,8 @@ extern "C" void ICACHE_FLASH_ATTR user_pre_init(void) {
 }
 
 os_timer_t temperature_timer;
+os_timer_t init_timer;
+
 BMP280 bmp_280;
 I2CTemperatureDisplay oled;
 Wifi wifi;
@@ -71,10 +73,12 @@ extern "C" void ICACHE_FLASH_ATTR read_temperature(void *ptr) {
     oled.put_s(str);
 }
 
-extern "C" void ICACHE_FLASH_ATTR user_init(void) {
+extern "C" void ICACHE_FLASH_ATTR init_classes(void *ptr) {
     wifi = Wifi();
+    wifi.request_scan();
     wifi.connect();
 
+    /*
     bmp_280 = BMP280();
     
     oled = I2CTemperatureDisplay();
@@ -82,4 +86,10 @@ extern "C" void ICACHE_FLASH_ATTR user_init(void) {
 
     os_timer_setfn(&temperature_timer, read_temperature, NULL);
     os_timer_arm(&temperature_timer, 1000, true);
+    */
+}
+
+extern "C" void ICACHE_FLASH_ATTR user_init(void) {
+    os_timer_setfn(&init_timer, init_classes, NULL);
+    os_timer_arm(&init_timer, 0, false);
 }
