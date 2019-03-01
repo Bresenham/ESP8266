@@ -26,7 +26,8 @@ SUBDIRS=    \
 	BMP280   \
 	SOFT_I2C	\
 	SSD1306_OLED	\
-	WIFI
+	WIFI	\
+	Util
 
 endif # } PDIR
 
@@ -54,7 +55,8 @@ COMPONENTS_eagle.app.v6 = \
 	BMP280/BMP280.a	\
 	Soft_I2C/I2C.a	\
 	SSD1306_OLED/OLED.a	\
-	WIFI/WIFI.a
+	WIFI/WIFI.a	\
+	Util/Util.a
 
 LINKFLAGS_eagle.app.v6 = \
 	-L../lib        \

@@ -7,6 +7,7 @@ extern "C" {
 #include "../BMP280/BMP280.h"
 #include "../SSD1306_OLED/I2C_TEMP_OLED.h"
 #include "../WIFI/Wifi.h"
+#include "../Util/Util.h"
 
 #if ((SPI_FLASH_SIZE_MAP == 0) || (SPI_FLASH_SIZE_MAP == 1))
 #error "The flash map is not supported"
@@ -74,13 +75,13 @@ extern "C" void ICACHE_FLASH_ATTR read_temperature(void *ptr) {
     
     wifi.send_data(temp_str);
 
-    /*
-    char str[14];
-    os_sprintf(str, "Temp = %d °C", temperature);
+    char str[24];
+    char tmpStr[16];
+    Util::printFloat(temperature / 100.0f, tmpStr);
+    os_sprintf(str, "Ambient = %s°C", tmpStr);
     oled.clear_screen();
     oled.goto_x_y(0, 0);
     oled.put_s(str);
-    */
 }
 
 extern "C" void ICACHE_FLASH_ATTR init_classes(void *ptr) {
