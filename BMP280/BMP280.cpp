@@ -7,7 +7,6 @@ extern "C" {
 
 BMP280::BMP280(void) {
     i2c = I2C();
-    gpio_output_set(0, SDO_GPIO, SDO_GPIO, 0);
     setup();
 }
 

@@ -45,8 +45,6 @@
 #define SENSOR_DIG_T3_LSB_REG           0x8C
 #define SENSOR_DIG_T3_MSB_REG           0x8D
 
-#define SDO_GPIO 2
-
 class BMP280 {
     public:
         void test(void);
