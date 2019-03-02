@@ -5,6 +5,8 @@ class Wifi {
     public:
         void send_data(char *data);
         void scan_wifi_networks(void);
+        static void register_could_not_connect_cb(void (*callback)(void));
+        static void register_connected_cb(void (*callback)(void));
         Wifi();
     private:
         void connect(void);
@@ -23,6 +25,9 @@ class Wifi {
         const char *PW;
 
         static char data_to_send[12];
+
+        static void (*not_connected_cb)();
+        static void (*connected_cb)();
 
 };
 

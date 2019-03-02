@@ -27,7 +27,8 @@ SUBDIRS=    \
 	SOFT_I2C	\
 	SSD1306_OLED	\
 	WIFI	\
-	Util
+	Util	\
+	Buffer
 
 endif # } PDIR
 
@@ -56,7 +57,8 @@ COMPONENTS_eagle.app.v6 = \
 	Soft_I2C/I2C.a	\
 	SSD1306_OLED/OLED.a	\
 	WIFI/WIFI.a	\
-	Util/Util.a
+	Util/Util.a	\
+	Buffer/Buffer.a
 
 LINKFLAGS_eagle.app.v6 = \
 	-L../lib        \
@@ -73,6 +75,7 @@ LINKFLAGS_eagle.app.v6 = \
 	-lphy	\
 	-lpp	\
 	-lnet80211	\
+	-lm	\
 	-llwip	\
 	-lwpa	\
 	-lcrypto	\

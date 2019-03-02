@@ -20,6 +20,8 @@ LOCAL struct espconn user_tcp_conn;
 LOCAL struct _esp_tcp user_tcp;
 ip_addr_t tcp_server_ip;
 
+void (*Wifi::connected_cb)() = NULL;
+void (*Wifi::not_connected_cb)() = NULL;
 char Wifi::data_to_send[12] = "";
 bool sent_last_data = true;
 
@@ -59,7 +61,7 @@ void ICACHE_FLASH_ATTR Wifi::connect(void) {
     // Set timer to check whether router allotted an IP 
     os_timer_disarm(&test_timer);
     os_timer_setfn(&test_timer, (os_timer_func_t *)user_check_ip, NULL);
-    os_timer_arm(&test_timer, 100, 0);
+    os_timer_arm(&test_timer, 100, false);
 }
 
 void ICACHE_FLASH_ATTR Wifi::user_tcp_recv_cb(void *arg, char *pusrdata, unsigned short length) {
@@ -90,6 +92,8 @@ void ICACHE_FLASH_ATTR Wifi::user_send_data(espconn *pespconn) {
 }
 
 void ICACHE_FLASH_ATTR Wifi::user_tcp_connect_cb(void *arg) {
+    (*connected_cb)();
+
     struct espconn *pespconn = (struct espconn *)arg;
   
     os_printf("Connected to server...\r\n");
@@ -180,11 +184,12 @@ void ICACHE_FLASH_ATTR Wifi::user_check_ip(void) {
                 wifi_station_get_connect_status() == STATION_NO_AP_FOUND ||
                 wifi_station_get_connect_status() == STATION_CONNECT_FAIL)) {
             os_printf("Connection to router failed!\r\n");
+            (*not_connected_cb)();
         } 
         else {
             //re-arm timer to check ip
             os_timer_setfn(&test_timer, (os_timer_func_t *)user_check_ip, NULL);
-            os_timer_arm(&test_timer, 100, 0);
+            os_timer_arm(&test_timer, 100, false);
         }
     }
 }
@@ -218,4 +223,12 @@ void ICACHE_FLASH_ATTR Wifi::scan_wifi_networks(void) {
     sc.show_hidden = 1;
 
     wifi_station_scan(&sc, scan_done_cb);
+}
+
+void ICACHE_FLASH_ATTR Wifi::register_connected_cb(void (*fnc)(void)) {
+    connected_cb = &(*fnc);
+}
+
+void ICACHE_FLASH_ATTR Wifi::register_could_not_connect_cb(void (*fnc)(void)) {
+    not_connected_cb = &(*fnc);
 }

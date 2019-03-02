@@ -65,32 +65,46 @@ BMP280 bmp_280;
 I2CTemperatureDisplay oled;
 Wifi wifi;
 
+bool is_connected = false;
+
+extern "C" void ICACHE_FLASH_ATTR wifi_not_connected(void) {
+    is_connected = false;
+}
+
+extern "C" void ICACHE_FLASH_ATTR wifi_connected(void) {
+    is_connected = true;
+}
+
 extern "C" void ICACHE_FLASH_ATTR read_temperature(void *ptr) {
     int32_t temperature = bmp_280.read_temperature();
 
-    char temp_str[11];
-    os_sprintf(temp_str, "VALUE=%d", temperature);
-    os_printf(temp_str);
-    os_printf("\r\n");
-    
-    wifi.send_data(temp_str);
+    oled.push_temperature_value(temperature);
+    oled.draw_temperature_graph();
 
-    char str[24];
-    char tmpStr[16];
-    Util::printFloat(temperature / 100.0f, tmpStr);
-    os_sprintf(str, "Ambient = %s°C", tmpStr);
-    oled.clear_screen();
-    oled.goto_x_y(0, 0);
-    oled.put_s(str);
+    if(is_connected)
+        oled.draw_rect(119, 1, 124, 6);
+    else
+        oled.fill_rect(119, 1, 124, 5);
+    oled.display();
+
+    char data_to_send[11];
+    os_sprintf(data_to_send, "VALUE=%d", temperature);
+    os_printf(data_to_send);
+    os_printf("\r\n");
+
+    wifi.send_data(data_to_send);
 }
 
 extern "C" void ICACHE_FLASH_ATTR init_classes(void *ptr) {
     wifi = Wifi();
+    wifi.register_connected_cb(wifi_connected);
+    wifi.register_could_not_connect_cb(wifi_not_connected);
 
     bmp_280 = BMP280();
     
     oled = I2CTemperatureDisplay();
-    oled.init();
+    oled.set_lower_temp_limit(2100);
+    oled.set_upper_temp_limit(3000);
 
     os_timer_setfn(&temperature_timer, read_temperature, NULL);
     os_timer_arm(&temperature_timer, 1000, true);

@@ -137,7 +137,11 @@ static const uint32_t ssd1306oled_font6x8 [] PROGMEM = {
 	0x00, 0x7E, 0x01, 0x49, 0x55, 0x73, // ß
 };
 
-static uint8_t display_buffer[128 * 64 / 8];
+I2CDisplay::I2CDisplay() {
+    current_index = 0;
+    init();
+    clear_screen();
+}
 
 void I2CDisplay::init(void) {
     i2c.start();
@@ -194,6 +198,27 @@ void I2CDisplay::draw_line(uint8_t x1, uint8_t y1, uint8_t x2, uint8_t y2) {
 	}
 }
 
+void I2CDisplay::draw_rect(uint8_t px1, uint8_t py1, uint8_t px2, uint8_t py2) {
+    draw_line(px1, py1, px2, py1);
+    draw_line(px2, py1, px2, py2);
+    draw_line(px2, py2, px1, py2);
+    draw_line(px1, py2, px1, py1);
+}
+
+void I2CDisplay::fill_rect(uint8_t px1, uint8_t py1, uint8_t px2, uint8_t py2) {
+    if(px1 > px2){
+        uint8_t temp = px1;
+        px1 = px2;
+        px2 = temp;
+        temp = py1;
+        py1 = py2;
+        py2 = temp;
+    }
+
+    for (uint8_t i=0; i <= (py2-py1); i++)
+        draw_line(px1, py1+i, px2, py1+i);
+}
+
 void I2CDisplay::draw_pixel(uint8_t x, uint8_t y) {
     display_buffer[(uint8_t)(y / 8) * 128 + x] |= (1 << (y % 8));
 }
@@ -207,33 +232,33 @@ void I2CDisplay::put_c(char c) {
     uint8_t ch = c - 32;
     if(c == '°') //°
         ch = 101;
+
+    for(uint8_t i = 0; i < 6; i++) {
+        display_buffer[current_index] = ssd1306oled_font6x8[ch * 6 + i];
+        current_index += 1;
+    }
+    /*
     i2c.start();
     i2c.send_byte(LCD_I2C_ADDR);
     i2c.send_byte(0x40);
     for(uint8_t i = 0; i < 6; i++)
         i2c.send_byte(ssd1306oled_font6x8[ch * 6 + i]);
     i2c.stop();
+    */
 }
 
 void I2CDisplay::clear_screen(void) {
+    os_memset(display_buffer, 0 , DISPLAY_BUFFER_SIZE);
+    /*
     goto_x_y(0, 0);
-    i2c.start();
-    i2c.send_byte(LCD_I2C_ADDR);
-    i2c.send_byte(0x40);
-    for(uint16_t i = 0; i < 128 * 8; i++)
-        i2c.send_byte(0x00);
-    i2c.stop();
+    for(uint16_t i = 0; i < DISPLAY_BUFFER_SIZE; i++) {
+        display_buffer[i] = 0x00;
+    }
+    */
 }
 
 void I2CDisplay::goto_x_y(uint8_t x, uint8_t y) {
-    i2c.start();
-    i2c.send_byte(LCD_I2C_ADDR);
-    i2c.send_byte(0x00);
-    i2c.send_byte(0xb0 + y);
-    i2c.send_byte(0x21);
-    i2c.send_byte(x);
-    i2c.send_byte(0x7F);
-    i2c.stop();
+    current_index = x + (y * DISPLAY_WIDTH);
 }
 
 void I2CDisplay::lcd_command(uint8_t cmd) {
