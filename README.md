@@ -77,3 +77,5 @@ ESP8266 reads ID from BMP280 via Soft-I2C (analyzed with Saleae Logic Analyzer):
 
 Library for SSD1306 OLED Display communication: https://www.mikrocontroller.net/topic/415651 <br/>
 Basic Wifi Structure (`Sample Codes` -> `ESP8266 as TCP Client`): https://www.espressif.com/en/products/hardware/esp8266ex/resources <br/>
+
+First breadboard construction: ![alt text](https://github.com/Bresenham/ESP8266/blob/master/resources/Breadboard.jpg)
