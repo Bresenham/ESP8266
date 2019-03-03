@@ -76,23 +76,27 @@ extern "C" void ICACHE_FLASH_ATTR wifi_connected(void) {
 }
 
 extern "C" void ICACHE_FLASH_ATTR read_temperature(void *ptr) {
-    int32_t temperature = bmp_280.read_temperature();
+    const int32_t temperature = bmp_280.read_temperature();
 
-    oled.push_temperature_value(temperature);
-    oled.draw_temperature_graph();
+    if(temperature < 4000 && temperature > -2000) {
 
-    if(is_connected)
-        oled.draw_rect(119, 1, 124, 6);
-    else
-        oled.fill_rect(119, 1, 124, 5);
-    oled.display();
+        oled.push_temperature_value(temperature);
+        oled.draw_temperature_graph();
 
-    char data_to_send[11];
-    os_sprintf(data_to_send, "VALUE=%d", temperature);
-    os_printf(data_to_send);
-    os_printf("\r\n");
+        if(is_connected)
+            oled.fill_rect(119, 1, 124, 5);    
+        else
+            oled.draw_rect(119, 1, 124, 6);
+        oled.display();
 
-    wifi.send_data(data_to_send);
+        char data_to_send[11];
+        os_sprintf(data_to_send, "VALUE=%d", temperature);
+        os_printf(data_to_send);
+        os_printf("\r\n");
+
+        wifi.send_data(data_to_send);
+    } else
+        os_printf("TEMPERATURE VALUE OUT OF RANGE\r\n");
 }
 
 extern "C" void ICACHE_FLASH_ATTR init_classes(void *ptr) {
@@ -103,8 +107,6 @@ extern "C" void ICACHE_FLASH_ATTR init_classes(void *ptr) {
     bmp_280 = BMP280();
     
     oled = I2CTemperatureDisplay();
-    oled.set_lower_temp_limit(2100);
-    oled.set_upper_temp_limit(3000);
 
     os_timer_setfn(&temperature_timer, read_temperature, NULL);
     os_timer_arm(&temperature_timer, 1000, true);

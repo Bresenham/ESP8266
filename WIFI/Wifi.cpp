@@ -32,7 +32,7 @@ Wifi::Wifi() {
     this->PW = "";
 }
 
-void Wifi::send_data(char *dat) {
+void ICACHE_FLASH_ATTR Wifi::send_data(char *dat) {
     if(sent_last_data) {
         os_strcpy(data_to_send, dat);
         sent_last_data = false;

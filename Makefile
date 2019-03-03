@@ -36,6 +36,9 @@ APPDIR = .
 LDDIR = ../ld
 
 CCFLAGS += -Os
+CCFLAGS += -std=gnu++11
+CCFLAGS += -fno-exceptions
+CCFLAGS += -fno-rtti
 
 TARGET_LDFLAGS =		\
 	-nostdlib		\
@@ -85,6 +88,7 @@ LINKFLAGS_eagle.app.v6 = \
 	-lmbedtls	\
 	-lpwm	\
 	-ldriver \
+	-Wl,-Map -Wl,"mapfile.map" \
 	-lsmartconfig \
 	$(DEP_LIBS_eagle.app.v6)					\
 	-Wl,--end-group
