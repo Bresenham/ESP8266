@@ -18,16 +18,9 @@ void ICACHE_FLASH_ATTR Buffer::push_value(const int32_t value) {
 }
 
 void ICACHE_FLASH_ATTR Buffer::shift_buffer(void) {
-    if(size == 0) return;
-    
     for(uint8_t i = size; i > 0; i--) {
         buffer[i] = buffer[i - 1];
     }
-
-    os_printf("--------- BUFFER PRINT ---------\r\n");
-    for(uint8_t i = 0; i < size; i++)
-        os_printf("%d, ", buffer[i]);
-    os_printf("\r\n--------- BUFFER END ---------\r\n");
 }
 
 void ICACHE_FLASH_ATTR Buffer::get_values(int32_t *copy) {

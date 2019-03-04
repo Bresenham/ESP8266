@@ -4,7 +4,7 @@
 class Wifi {
     public:
         void send_data(char *data);
-        void scan_wifi_networks(void);
+        void scan_wifi_networks(scan_done_cb_t scan_done_cb);
         static void register_could_not_connect_cb(void (*callback)(void));
         static void register_connected_cb(void (*callback)(void));
         Wifi();
@@ -19,7 +19,6 @@ class Wifi {
         static void user_dns_found(const char *name, ip_addr_t *ipaddr, void *arg);
         static void user_dns_check_cb(void *arg);
         static void user_check_ip(void);
-        static void scan_done_cb(void *arg, STATUS status);
 
         const char *SSID;
         const char *PW;

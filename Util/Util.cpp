@@ -28,7 +28,7 @@ int32_t ICACHE_FLASH_ATTR Util::get_lowest_element(const int32_t *values, const 
 int32_t ICACHE_FLASH_ATTR Util::get_compare_value(const int32_t *values, const int16_t size, bool (*compare)(const int32_t, const int32_t)) {
 	int32_t value = values[0];
 	for(uint16_t i = 1; i < size; i++) {
-		if((*compare)(values[i], value))
+		if(compare(values[i], value))
 			value = values[i];
 	}
 	

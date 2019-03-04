@@ -26,6 +26,7 @@ char Wifi::data_to_send[12] = "";
 bool sent_last_data = true;
 
 Wifi::Wifi() {
+    wifi_station_ap_number_set(0);
     wifi_station_set_auto_connect(false);
     wifi_set_opmode(STATION_MODE);
     this->SSID = "";
@@ -107,6 +108,7 @@ void ICACHE_FLASH_ATTR Wifi::user_tcp_connect_cb(void *arg) {
 
 void ICACHE_FLASH_ATTR Wifi::user_tcp_recon_cb(void *arg, sint8 err) {
     os_printf("Reconnect callback called, error code: %d !!! \r\n", err);
+    sent_last_data = true;
 }
 
 void ICACHE_FLASH_ATTR Wifi::user_dns_found(const char *name, ip_addr_t *ipaddr, void *arg) {
@@ -141,13 +143,6 @@ void ICACHE_FLASH_ATTR Wifi::user_dns_found(const char *name, ip_addr_t *ipaddr,
 
 void ICACHE_FLASH_ATTR Wifi::user_dns_check_cb(void *arg) {
     os_printf("DNS CHECK CB CALLED\r\n");
-    /*
-    struct espconn *pespconn = (struct espconn *)arg;
-
-    espconn_gethostbyname(pespconn, NET_DOMAIN, &tcp_server_ip, user_dns_found); // recall DNS function
-
-    os_timer_arm(&test_timer, 1000, 0);
-    */
 }
 
 void ICACHE_FLASH_ATTR Wifi::user_check_ip(void) {
@@ -194,28 +189,7 @@ void ICACHE_FLASH_ATTR Wifi::user_check_ip(void) {
     }
 }
 
-void ICACHE_FLASH_ATTR Wifi::scan_done_cb(void *arg, STATUS status) {
-    char buf[100];
-    struct bss_info *bssInfo = (struct bss_info*)arg;
-    bssInfo = STAILQ_NEXT(bssInfo, next);
-
-    os_printf("-------------- WIFI SCAN RESULTS --------------\r\n");
-    while (bssInfo != NULL) {
-        os_sprintf(buf, "%-32s %02X:%02X:%02X:%02X:%02X:%02X, ch %2d, auth %d, hid %d, rssi %d\n\r", 
-                   bssInfo->ssid, 
-                   bssInfo->bssid[0], bssInfo->bssid[1], bssInfo->bssid[2],
-                   bssInfo->bssid[3], bssInfo->bssid[4], bssInfo->bssid[5],
-                   bssInfo->channel,
-                   bssInfo->authmode, bssInfo->is_hidden,
-                   bssInfo->rssi);
-        os_printf(buf);
-        os_delay_us(200);
-        bssInfo = STAILQ_NEXT(bssInfo, next);
-    }
-    os_printf("-------------- END --------------\r\n");
-}
-
-void ICACHE_FLASH_ATTR Wifi::scan_wifi_networks(void) {
+void ICACHE_FLASH_ATTR Wifi::scan_wifi_networks(scan_done_cb_t scan_done_cb) {
     struct scan_config sc;
     sc.ssid = NULL;
     sc.bssid = NULL;

@@ -75,6 +75,30 @@ extern "C" void ICACHE_FLASH_ATTR wifi_connected(void) {
     is_connected = true;
 }
 
+extern "C" void ICACHE_FLASH_ATTR scan_done_cb(void *arg, STATUS status) {
+    if(status == OK) {
+        char buf[100];
+        struct bss_info *bssInfo = (struct bss_info*)arg;
+        bssInfo = STAILQ_NEXT(bssInfo, next);
+
+        os_printf("-------------- WIFI SCAN RESULTS --------------\r\n");
+        while (bssInfo != NULL) {
+            os_sprintf(buf, "%-32s %02X:%02X:%02X:%02X:%02X:%02X, ch %2d, auth %d, hid %d, rssi %d\n\r", 
+                    bssInfo->ssid, 
+                    bssInfo->bssid[0], bssInfo->bssid[1], bssInfo->bssid[2],
+                    bssInfo->bssid[3], bssInfo->bssid[4], bssInfo->bssid[5],
+                    bssInfo->channel,
+                    bssInfo->authmode, bssInfo->is_hidden,
+                    bssInfo->rssi);
+            os_printf(buf);
+            os_delay_us(200);
+            bssInfo = STAILQ_NEXT(bssInfo, next);
+        }
+        os_printf("-------------- END --------------\r\n");
+    } else
+        os_printf("-------------- SCAN RESULT NOT OK --------------\r\n");
+}
+
 extern "C" void ICACHE_FLASH_ATTR read_temperature(void *ptr) {
     const int32_t temperature = bmp_280.read_temperature();
 
