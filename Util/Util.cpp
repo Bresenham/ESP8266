@@ -36,6 +36,7 @@ int32_t ICACHE_FLASH_ATTR Util::get_compare_value(const int32_t *values, const i
 }
 
 int32_t ICACHE_FLASH_ATTR Util::map(const int32_t x, const int32_t in_min, const int32_t in_max, const int32_t out_min, const int32_t out_max) {
+	if(x < in_min || x > in_max) return 0;
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 

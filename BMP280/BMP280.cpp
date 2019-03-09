@@ -51,11 +51,11 @@ void BMP280::setup(void) {
         if(read_reg(SENSOR_CTRL_MEAS_REG) == ctrl_meas_reg_data) {
             os_printf("SUCCESSFULLY CONFIGURED: TEMP SAMPLING 16, PRESSURE SKIP, NORMAL MODE.\r\n");
 
-            write_reg(SENSOR_CONFIG_REG, SENSOR_STANDBY_TIME_500_MS);
+            write_reg(SENSOR_CONFIG_REG, SENSOR_STANDBY_TIME_0_5_MS);
             os_delay_us(100);
 
-            if(read_reg(SENSOR_CONFIG_REG) == SENSOR_STANDBY_TIME_500_MS) {
-                os_printf("SUCCESSFULLY CONFIGURED: STANDBY TIME 500MS.\r\n");
+            if(read_reg(SENSOR_CONFIG_REG) == SENSOR_STANDBY_TIME_0_5_MS) {
+                os_printf("SUCCESSFULLY CONFIGURED: STANDBY TIME 0.5MS.\r\n");
 
                 dig_T1 = read_reg(SENSOR_DIG_T1_MSB_REG) << 8 | read_reg(SENSOR_DIG_T1_LSB_REG);
                 dig_T2 = read_reg(SENSOR_DIG_T2_MSB_REG) << 8 | read_reg(SENSOR_DIG_T2_LSB_REG);

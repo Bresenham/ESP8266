@@ -18,13 +18,16 @@
 #define SENSOR_CTRL_MEAS_REG            0xF4
 
 #define SENSOR_CONFIG_REG               0xF5
+#define SENSOR_STANDBY_TIME_0_5_MS      0x00
 #define SENSOR_STANDBY_TIME_500_MS      0x80
 #define SENSOR_STANDBY_TIME_1000_MS     0xA0
 #define SENSOR_STANDBY_TIME_2000_MS     0xC0
 
 #define SENSOR_TEMP_SAMPLING_16         0xE0
-#define SENSOR_TEMP_SAMPLING_8          0x40
-#define SENSOR_TEMP_SAMPLING_4          0x30
+#define SENSOR_TEMP_SAMPLING_8          0x80
+#define SENSOR_TEMP_SAMPLING_4          0x60
+#define SENSOR_TEMP_SAMPLING_2          0x40
+#define SENSOR_TEMP_SAMPLING_1          0x20
 
 #define SENSOR_TEMP_MEASURE_MSB         0xFA
 #define SENSOR_TEMP_MEASURE_LSB         0xFB

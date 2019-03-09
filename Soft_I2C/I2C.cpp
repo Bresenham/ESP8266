@@ -25,46 +25,46 @@ I2C::I2C(void) {
 
     set_SDA_high();
     set_SCL_high();
-    os_delay_us(DELAY);
+    /* os_delay_us(DELAY); */
 }
 
 void ICACHE_FLASH_ATTR I2C::start(void) {
     set_SDA_low();
-    os_delay_us(DELAY);
+    /* os_delay_us(DELAY); */
     set_SCL_low();
 }
 
 void ICACHE_FLASH_ATTR I2C::repeated_start(void) {
     set_SDA_high();
-    os_delay_us(DELAY);
+    /* os_delay_us(DELAY); */
     set_SCL_high();
-    os_delay_us(DELAY);
+    /* os_delay_us(DELAY); */
     set_SDA_low();
-    os_delay_us(DELAY);
+    /* os_delay_us(DELAY); */
     set_SCL_low();
 }
 
 void ICACHE_FLASH_ATTR I2C::master_ack(void) {
     set_SDA_low();
-    os_delay_us(DELAY);
+    /* os_delay_us(DELAY); */
     set_SCL_high();
-    os_delay_us(DELAY);
+    /* os_delay_us(DELAY); */
     set_SCL_low();
-    os_delay_us(DELAY);
+    /* os_delay_us(DELAY); */
     set_SDA_high();
 }
 
 void ICACHE_FLASH_ATTR I2C::master_nack(void) {
     set_SCL_low();
-    os_delay_us(DELAY);
+    /* os_delay_us(DELAY); */
     set_SCL_high();
-    os_delay_us(DELAY);
+    /* os_delay_us(DELAY); */
     set_SCL_low();
 }
 
 void ICACHE_FLASH_ATTR I2C::stop(void) {
     set_SCL_high();
-    os_delay_us(DELAY);
+    /* os_delay_us(DELAY); */
     set_SDA_high();
 }
 
@@ -86,16 +86,16 @@ bool ICACHE_FLASH_ATTR I2C::send_byte(uint8_t byte) {
         else
             set_SDA_low();
         set_SCL_high();
-        os_delay_us(DELAY);
+        /* os_delay_us(DELAY); */
         set_SCL_low();
     }
     
     set_SDA_high();
 
     /* 9th clock for slave to ack transmitted byte */
-    os_delay_us(DELAY);
+    /* os_delay_us(DELAY); */
     set_SCL_high();
-    os_delay_us(DELAY);
+    /* os_delay_us(DELAY); */
     uint8_t slave_ack = read_SDA();
     set_SCL_low();
 
