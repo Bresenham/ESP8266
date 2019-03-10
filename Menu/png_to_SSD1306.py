@@ -1,10 +1,17 @@
+import glob
+import ntpath
 from PIL import Image
+
+
+def get_filename_from_path(path):
+    head, tail = ntpath.split(path)
+    return tail or ntpath.basename(head)
 
 
 def convert(png_file):
     image = Image.open(png_file)
     rgb_im = image.convert('L')
-    string = '''const uint8_t array[] = {'''
+    string = "const uint8_t " + get_filename_from_path(png_file).split(".")[0] + "[] PROGMEM = {"
     data_array = []
     for i in range(int(128 * 64 / 8)):
         data_array.append(0)
@@ -24,4 +31,5 @@ def convert(png_file):
     
 
 if __name__ == '__main__':
-    convert(r"C:\Users\Standardbenutzer\Documents\ESP8266\Projects\ESP8266\Menu\Menu_Parts\Ret_Button\Ret_Invert.png")
+    for file in glob.iglob('C:/Users/Standardbenutzer/Documents/ESP8266/Projects/ESP8266/Menu/Menu_Parts/**/*.png', recursive=True):
+        convert(file)
