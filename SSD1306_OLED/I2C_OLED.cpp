@@ -3,7 +3,7 @@ extern "C" {
     #include "math.h"
 }
 
-static const uint32_t ssd1306_init_sequence [] PROGMEM = {	// Initialization Sequence
+const uint8_t ssd1306_init_sequence [] PROGMEM = {	// Initialization Sequence
     0xAE,			// Display OFF (sleep mode)
     0x20, 0b00,		// Set Memory Addressing Mode
                     // 00=Horizontal Addressing Mode; 01=Vertical Addressing Mode;
@@ -31,7 +31,7 @@ static const uint32_t ssd1306_init_sequence [] PROGMEM = {	// Initialization Seq
 
 };
 
-static const uint32_t ssd1306oled_font6x8 [] PROGMEM = {
+const uint8_t ssd1306oled_font6x8 [] PROGMEM = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, // sp
     0x00, 0x00, 0x00, 0x2f, 0x00, 0x00, // !
     0x00, 0x00, 0x07, 0x00, 0x07, 0x00, // "
@@ -146,7 +146,7 @@ I2CDisplay::I2CDisplay() {
 void ICACHE_FLASH_ATTR I2CDisplay::init(void) {
     i2c.start();
     for(uint8_t i = 0; i < sizeof(ssd1306_init_sequence)/sizeof(ssd1306_init_sequence[0]); i++)
-        lcd_command((uint8_t)(ssd1306_init_sequence[i] & 0xFF));
+        lcd_command(ssd1306_init_sequence[i]);
     lcd_command(LCD_DISP_ON);
 }
 

@@ -58,6 +58,7 @@ extern "C" void ICACHE_FLASH_ATTR user_pre_init(void) {
 	}
 }
 
+os_timer_t restart_timer_if_no_wifi;
 os_timer_t temperature_read_timer;
 os_timer_t init_timer;
 
@@ -69,6 +70,7 @@ bool is_connected = false;
 
 extern "C" void ICACHE_FLASH_ATTR wifi_not_connected(void) {
     is_connected = false;
+    os_timer_arm(&restart_timer_if_no_wifi, 16000, false);
 }
 
 extern "C" void ICACHE_FLASH_ATTR wifi_connected(void) {
@@ -97,6 +99,13 @@ extern "C" void ICACHE_FLASH_ATTR scan_done_cb(void *arg, STATUS status) {
         os_printf("-------------- END --------------\r\n");
     } else
         os_printf("-------------- SCAN RESULT NOT OK --------------\r\n");
+}
+
+extern "C" void ICACHE_FLASH_ATTR restart_system(void *ptr) {
+    if(!is_connected) {
+        os_timer_disarm(&temperature_read_timer);
+        system_restart();
+    }
 }
 
 extern "C" void ICACHE_FLASH_ATTR read_temperature(void *ptr) {
@@ -142,4 +151,7 @@ extern "C" void ICACHE_FLASH_ATTR user_init(void) {
 
     os_timer_setfn(&init_timer, init_classes, NULL);
     os_timer_arm(&init_timer, 0, false);
+
+    os_timer_setfn(&restart_timer_if_no_wifi, restart_system, NULL);
+    os_timer_arm(&restart_timer_if_no_wifi, 16000, false);
 }
